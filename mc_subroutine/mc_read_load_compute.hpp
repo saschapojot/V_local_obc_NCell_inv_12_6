@@ -238,6 +238,16 @@ public:
     /// @param xVecNext
     void proposal_uni(const std::shared_ptr<double[]> & xVecCurr,const int&j,std::shared_ptr<double[]>&xVecNext);
 
+
+    double acceptanceRatio_uni(const std::shared_ptr<double[]> & xVecCurr,const std::shared_ptr<double[]> & xVecNext,const int &j,const double &UCurr, double &UNext);
+
+    void saveLastData2Csv(const std::shared_ptr<double[]>& array, const  int& arraySize, const std::string& filename, const int& numbersPerRow);
+
+    void save_array_to_pickle_one_column(double *ptr, const int& startingInd, std::size_t size,const int & numbersPerRow, const std::string& filename);
+    std::string generate_varName(const int &ind,const int &numbersPerRow);
+
+
+    void execute_mc_one_sweep(const std::shared_ptr<double[]>&xVec);
 public:
     double T;// temperature
     double beta;
