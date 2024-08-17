@@ -60,6 +60,7 @@ public:
 
 
     double operator() (const double * xVec, const int& j)override{
+        //only computes the part of the potential that changes
     if(j<0 or j>=2*N){
         std::cerr<<"j="+std::to_string(j)+" out of range";
         std::exit(14);
@@ -72,11 +73,13 @@ public:
        }//end 2N-1
        else{
            if(j%2==1){
+               //B, odd position
                double d1=xVec[j]-xVec[j-1];
                double d2=xVec[j+1]-xVec[j];
                return V1(d1)+V2(d2);
            }//end odd
            else{
+               //A, even position
                double d2=xVec[j]-xVec[j-1];
                double d1=xVec[j+1]-xVec[j];
                return V2(d2)+V1(d1);

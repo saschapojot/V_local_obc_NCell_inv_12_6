@@ -5,7 +5,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(run_mc run_mc.cpp mc_subroutine/mc_read_load_compute.cpp potentialFunction/potentialFunctions.cpp)
 
-add_executable(main main.cpp potentialFunction/potentialFunctions.cpp mc_subroutine/mc_read_load_compute.cpp)
+add_executable(main main.cpp potentialFunction/potentialFunctions.cpp mc_subroutine/mc_read_load_compute.cpp
+        potentialFunction/potentialFunctionPrototype.hpp
+        potentialFunction/potentialFunctions.cpp
+        mc_subroutine/mc_read_load_compute.hpp
+        mc_subroutine/mc_read_load_compute.cpp)
 
 set_source_files_properties(
         mc_subroutine/mc_read_load_compute.cpp
