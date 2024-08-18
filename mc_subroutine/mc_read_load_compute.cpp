@@ -221,3 +221,15 @@ std::string mc_computation::generate_varName(const int &ind,const int &numbersPe
     }//end ind !=0
 
 }
+
+
+
+void mc_computation::execute_mc_one_sweep(std::shared_ptr<double[]>&xVecCurr,std::shared_ptr<double[]>& xVecNext, const int &fls, const int& swp){
+
+for (int j=0;j<2*N;j++){
+
+
+}
+
+
+}

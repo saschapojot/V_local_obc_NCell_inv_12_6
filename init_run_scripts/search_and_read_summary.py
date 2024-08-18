@@ -33,7 +33,7 @@ erase_data_if_exist=bool(strtobool(jsonDataFromConf["erase_data_if_exist"]))
 search_and_read_summary_file=bool(strtobool(jsonDataFromConf["search_and_read_summary_file"]))
 potential_function_name=jsonDataFromConf["potential_function_name"]
 effective_data_num_required=int(jsonDataFromConf["effective_data_num_required"])
-loop_to_write=int(jsonDataFromConf["loop_to_write"])
+sweep_to_write=int(jsonDataFromConf["sweep_to_write"])
 default_flush_num=int(jsonDataFromConf["default_flush_num"])
 
 confFileName=jsonDataFromConf["confFileName"]
@@ -63,7 +63,7 @@ lag=-1
 startingFileInd=-1
 startingVecPosition=-1
 newDataPointNum=-1
-newMcStepNum=loop_to_write*default_flush_num
+newMcStepNum=sweep_to_write*default_flush_num
 newFlushNum=default_flush_num
 
 
@@ -95,7 +95,7 @@ def create_jsonFromSummary(startingFileIndVal,startingVecPositionVal,newMcStepNu
 
 
 
-#if observable_name not found, return -1,-1, loop_to_write*default_flush_num, then exit with code 0
+#if observable_name not found, return -1,-1, sweep_to_write*default_flush_num, then exit with code 0
 if "observable_name" not in jsonDataFromConf:
     jsonFromSummaryStr=create_jsonFromSummary(startingFileInd,startingVecPosition,newMcStepNum,
                                               newDataPointNum,newFlushNum,TDirRoot,U_dist_dataDir)
@@ -108,7 +108,7 @@ summaryFileName=TDirRoot+"/summary_"+obs_name+".txt"
 summaryFileExists= os.path.isfile(summaryFileName)
 
 
-#if summary file does not exist, return -1,-1, loop_to_write*default_flush_num, then exit with code 0
+#if summary file does not exist, return -1,-1, sweep_to_write*default_flush_num, then exit with code 0
 if summaryFileExists==False:
     jsonFromSummaryStr=create_jsonFromSummary(startingFileInd,startingVecPosition,newMcStepNum,
                                               newDataPointNum,newFlushNum,TDirRoot,U_dist_dataDir)
@@ -171,7 +171,7 @@ for oneLine in linesInSummaryFile:
 
 
 newMcStepNum=lag*newDataPointNum
-newFlushNum=int(np.ceil(newMcStepNum/loop_to_write))
+newFlushNum=int(np.ceil(newMcStepNum/sweep_to_write))
 jsonFromSummaryStr=create_jsonFromSummary(startingFileInd,startingVecPosition,newMcStepNum,
                                           newDataPointNum,newFlushNum,TDirRoot,U_dist_dataDir)
 jsonFromSummary_stdout="jsonFromSummary="+jsonFromSummaryStr

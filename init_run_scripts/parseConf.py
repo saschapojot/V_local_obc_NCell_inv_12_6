@@ -49,7 +49,7 @@ def parseConfContents(file):
     obs_name=""
     confFileName=file
     effective_data_num_required=""
-    loop_to_write=""
+    sweep_to_write=""
     default_flush_num=""
     potFuncName=""
     coefsStr=""
@@ -120,12 +120,12 @@ def parseConfContents(file):
                 potFuncName=value
 
 
-            #match loop_to_write
-            if key=="loop_to_write":
+            #match sweep_to_write
+            if key=="sweep_to_write":
                 if re.search(r"[^\d]",value):
                     print(fmtErrStr+oneLine)
                     exit(fmtCode)
-                loop_to_write=value
+                sweep_to_write=value
 
             #match default_flush_num
             if key=="default_flush_num":
@@ -184,8 +184,8 @@ def parseConfContents(file):
         print("effective_data_num_required not found in "+str(file))
         exit(valueMissingCode)
 
-    if loop_to_write=="":
-        print("loop_to_write not found in "+str(file))
+    if sweep_to_write=="":
+        print("sweep_to_write not found in "+str(file))
         exit(valueMissingCode)
 
     if default_flush_num=="":
@@ -207,7 +207,7 @@ def parseConfContents(file):
             "search_and_read_summary_file":searchReadSmrFile,
             "potential_function_name":potFuncName,
             "effective_data_num_required":effective_data_num_required,
-            "loop_to_write":loop_to_write,
+            "sweep_to_write":sweep_to_write,
             "default_flush_num":default_flush_num,
             "coefs":coefsStr,
             "confFileName":file,
@@ -224,7 +224,7 @@ def parseConfContents(file):
             "observable_name":obs_name,
             "potential_function_name":potFuncName,
             "effective_data_num_required":effective_data_num_required,
-            "loop_to_write":loop_to_write,
+            "sweep_to_write":sweep_to_write,
             "default_flush_num":default_flush_num,
             "coefs":coefsStr,
             "confFileName":file,

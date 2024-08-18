@@ -31,7 +31,7 @@ const auto PI=M_PI;
 
 class mc_computation {
 public:
-    mc_computation(const std::string &cppInParamsFileName): e2(std::random_device{}())  {
+    mc_computation(const std::string &cppInParamsFileName): e2(std::random_device{}()),distUnif01(0.0, 1.0)  {
         std::ifstream file(cppInParamsFileName);
         if (!file.is_open()) {
             std::cerr << "Failed to open the file." << std::endl;
@@ -77,8 +77,8 @@ public:
 
                 iss >> N;
 
-                xAVecInit = std::shared_ptr<double[]>(new double[N], std::default_delete<double[]>());
-                xBVecInit = std::shared_ptr<double[]>(new double[N], std::default_delete<double[]>());
+                xVecInit = std::shared_ptr<double[]>(new double[2*N], std::default_delete<double[]>());
+                mcNum_1sweep=2*N;
 
                 paramCounter++;
                 continue;
@@ -110,12 +110,10 @@ public:
                     values.push_back(std::stod(valueStr));
                 }
 
-                for(int i=0;i<N;i++){
-                    xAVecInit[i]=values[i];
+                for(int i=0;i<2*N;i++){
+                    xVecInit[i]=values[i];
                 }
-                for(int i=N;i<2*N;i++){
-                    xBVecInit[i-N]=values[i];
-                }
+
 
 
 
@@ -130,12 +128,12 @@ public:
             }//end reading initial values
 
 
-            //read loopToWrite
+            //read sweepToWrite
             if(paramCounter==5){
-                iss>>loopToWrite;
+                iss>>sweepToWrite;
                 paramCounter++;
                 continue;
-            }//end reading loopToWrite
+            }//end reading sweepToWrite
 
             //read newFlushNum
             if(paramCounter==6){
@@ -183,15 +181,15 @@ public:
 
 //        std::cout<<"LInit="<<LInit<<std::endl;
         std::cout<<"unit cell number="<<N<<std::endl;
-        std::cout<<"xAVecInit: \n";
-        print_shared_ptr(xAVecInit,N);
-        std::cout<<"xBVecInit: \n";
-        print_shared_ptr(xBVecInit,N);
+        std::cout<<"xVecInit: \n";
+        print_shared_ptr(xVecInit,2*N);
+
+
         this->potFuncPtr = createPotentialFunction(potFuncName, coefsToPotFunc);
         potFuncPtr->init();
-        this->varNum = 2*N+1;//U,xA, xB
+        this->varNum = 2*N+1;//U,x
         try {
-            this->U_dist_ptr= std::shared_ptr<double[]>(new double[loopToWrite * varNum],
+            this->U_dist_ptr= std::shared_ptr<double[]>(new double[sweepToWrite*mcNum_1sweep * varNum],
                                                         std::default_delete<double[]>());
         }
         catch (const std::bad_alloc &e) {
@@ -203,11 +201,13 @@ public:
         }
 
 
-        std::cout<<"loopToWrite="<<loopToWrite<<std::endl;
+        std::cout<<"sweepToWrite="<<sweepToWrite<<std::endl;
+        std::cout<<"mcNum_1sweep="<<mcNum_1sweep<<std::endl;
         std::cout<<"newFlushNum="<<newFlushNum<<std::endl;
         std::cout<<"loopLastFile+1="<<loopLastFile+1<<std::endl;
         std::cout<<"TDirRoot="<<TDirRoot<<std::endl;
         std::cout<<"U_dist_dataDir="<<U_dist_dataDir<<std::endl;
+
 
     }//end constructor
 
@@ -247,12 +247,32 @@ public:
     std::string generate_varName(const int &ind,const int &numbersPerRow);
 
 
-    void execute_mc_one_sweep(const std::shared_ptr<double[]>&xVec);
+    void execute_mc_one_sweep(std::shared_ptr<double[]>&xVecCurr,std::shared_ptr<double[]>& xVecNext, const int &fls, const int& swp);
+
+    template<class T>
+    void print_shared_ptr(const std::shared_ptr<T> &ptr,const int& size){
+        if (!ptr) {
+            std::cout << "Pointer is null." << std::endl;
+            return;
+        }
+
+        for(int i=0;i<size;i++){
+            if(i<size-1){
+                std::cout<<ptr[i]<<",";
+            }
+            else{
+                std::cout<<ptr[i]<<std::endl;
+            }
+        }
+
+    }
+
+
 public:
     double T;// temperature
     double beta;
     double h;// step size
-    size_t loopToWrite;
+    size_t sweepToWrite;
     size_t newFlushNum;
     size_t loopLastFile;
     std::shared_ptr<potentialFunction> potFuncPtr;
@@ -261,14 +281,16 @@ public:
     std::shared_ptr<double[]> U_dist_ptr;
     int varNum;
 
-    std::shared_ptr<double[]> xAVecInit;
-    std::shared_ptr<double[]> xBVecInit;
+    std::shared_ptr<double[]> xVecInit;
+
 
 
     std::string coefsToPotFunc;
     std::string potFuncName;
     int N;//unit cell number
+    int mcNum_1sweep;
     std::ranlux24_base e2;
+    std::uniform_real_distribution<> distUnif01;
 };
 
 

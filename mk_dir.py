@@ -31,8 +31,9 @@ def format_using_decimal(value):
     formatted_value = decimal_value.quantize(Decimal(1)) if decimal_value == decimal_value.to_integral() else decimal_value.normalize()
     return str(formatted_value)
 TVals=[0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,6]
-unitCellNum=5
-dataRoot="./dataAllUnitCell"+str(unitCellNum)+"/row"+str(rowNum)+"/"
+unitCellNum=100
+dataRoot="./dataAll/"
+dataOutDir=dataRoot+"/dataAllUnitCell"+str(unitCellNum)+"/row"+str(rowNum)+"/"
 
 TDirsAll=[]
 TStrAll=[]
@@ -43,7 +44,7 @@ for k in range(0,len(TVals)):
 
     TStr=str(T)#format_using_decimal(T)
     TStrAll.append(TStr)
-    TDir=dataRoot+"/T"+TStr+"/"
+    TDir=dataOutDir+"/T"+TStr+"/"
     TDirsAll.append(TDir)
     Path(TDir).mkdir(exist_ok=True,parents=True)
 
@@ -83,9 +84,9 @@ def contents_to_conf(k):
         "\n",
         "effective_data_num_required=1000\n",
         "\n",
-        "loop_to_write=1000000\n",
+        "sweep_to_write=100000\n",
         "\n",
-        "#within each flush,  loop_to_write mc computations are executed\n",
+        "#within each flush,  sweep_to_write mc computations are executed\n",
         "\n",
         "default_flush_num=10\n",
         "\n",

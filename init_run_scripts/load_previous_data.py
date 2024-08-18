@@ -35,9 +35,9 @@ UInit=6
 # y0Init=1
 # z0Init=1
 # y1Init=1
-coordsAll=np.array(list(range(1,2*N+1)))*0.77
-xA=coordsAll[0::2]
-xB=coordsAll[1::2]
+xVec=np.array(list(range(1,2*N+1)))*0.77
+# xA=coordsAll[0::2]
+# xB=coordsAll[1::2]
 
 loopLastFile=-1
 
@@ -51,19 +51,17 @@ for file in glob.glob(U_dist_dataDir+"/*.csv"):
         loopEndAll.append(int(matchEnd.group(1)))
 
 
-def create_loadedJsonData(UVal,xAVec,xBVec,loopLastFileVal):
+def create_loadedJsonData(UVal,xVec,loopLastFileVal):
     """
 
     :param UVal:
-    :param xAVec:
-    :param xBVec:
+    :param xVec:
     :param loopLastFileVal:
     :return:
     """
     initDataDict={
         "U":str(UVal),
-        "xAVec":list(xAVec),
-        "xBVec":list(xBVec),
+        "xVec":list(xVec),
         "loopLastFile":str(loopLastFileVal)
     }
     # print(initDataDict)
@@ -72,7 +70,7 @@ def create_loadedJsonData(UVal,xAVec,xBVec,loopLastFileVal):
 #if no data found, return the arbitrary values
 
 if len(csvFileList)==0:
-    loadedJsonDataStr=create_loadedJsonData(UInit,xA,xB,loopLastFile)
+    loadedJsonDataStr=create_loadedJsonData(UInit,xVec,loopLastFile)
     loadedJsonData_stdout="loadedJsonData="+loadedJsonDataStr
     print(loadedJsonData_stdout)
     exit(0)
@@ -97,10 +95,10 @@ valsInLastRow = [float(value) for value in csvLastRowStr.split(',')]
 
 UInit=valsInLastRow[0]
 
-xA=valsInLastRow[1:1+N]
-xB=valsInLastRow[1+N:2*N+1]
+xVec=valsInLastRow[1:]
 
-loadedJsonDataStr=create_loadedJsonData(UInit,xA,xB,loopLastFile)
+
+loadedJsonDataStr=create_loadedJsonData(UInit,xVec,loopLastFile)
 loadedJsonData_stdout="loadedJsonData="+loadedJsonDataStr
 print(loadedJsonData_stdout)
 exit(0)
