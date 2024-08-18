@@ -31,7 +31,7 @@ def format_using_decimal(value):
     formatted_value = decimal_value.quantize(Decimal(1)) if decimal_value == decimal_value.to_integral() else decimal_value.normalize()
     return str(formatted_value)
 TVals=[0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,6]
-unitCellNum=100
+unitCellNum=5
 dataRoot="./dataAll/"
 dataOutDir=dataRoot+"/dataAllUnitCell"+str(unitCellNum)+"/row"+str(rowNum)+"/"
 

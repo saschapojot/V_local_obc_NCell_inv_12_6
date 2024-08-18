@@ -31,7 +31,7 @@ const auto PI=M_PI;
 
 class mc_computation {
 public:
-    mc_computation(const std::string &cppInParamsFileName): e2(std::random_device{}()),distUnif01(0.0, 1.0)  {
+    mc_computation(const std::string &cppInParamsFileName): e2(std::random_device{}()),distUnif01(0.0, 1.0) {
         std::ifstream file(cppInParamsFileName);
         if (!file.is_open()) {
             std::cerr << "Failed to open the file." << std::endl;
@@ -142,14 +142,14 @@ public:
                 continue;
             }//end reading newFlushNum
 
-            //read loopLastFile
+            //read sweepLastFile
             if(paramCounter==7){
-                //if loopLastFileStr is "-1", loopLastFile uses the overflowed value
-                //and loopLastFile+1 will be 0
-                iss>>loopLastFile;
+                //if sweepLastFileStr is "-1", sweepLastFile uses the overflowed value
+                //and sweepLastFile+1 will be 0
+                iss>>sweepLastFile;
                 paramCounter++;
                 continue;
-            }//end reading loopLastFile
+            }//end reading sweepLastFile
 
             //read TDirRoot
             if (paramCounter==8){
@@ -204,11 +204,14 @@ public:
         std::cout<<"sweepToWrite="<<sweepToWrite<<std::endl;
         std::cout<<"mcNum_1sweep="<<mcNum_1sweep<<std::endl;
         std::cout<<"newFlushNum="<<newFlushNum<<std::endl;
-        std::cout<<"loopLastFile+1="<<loopLastFile+1<<std::endl;
+        std::cout<<"sweepLastFile+1="<<sweepLastFile+1<<std::endl;
         std::cout<<"TDirRoot="<<TDirRoot<<std::endl;
         std::cout<<"U_dist_dataDir="<<U_dist_dataDir<<std::endl;
-
-
+        std::uniform_int_distribution<int> dist(1, 6);
+        dist0_2N_minus1=std::uniform_int_distribution<int>(0,2*N-1);
+//        int random_number=dist0_2N_minus1(e2);
+//
+//        std::cout << "Random number: " << random_number << std::endl;
     }//end constructor
 
 public:
@@ -236,10 +239,10 @@ public:
     /// @param xVecCurr
     /// @param j
     /// @param xVecNext
-    void proposal_uni(const std::shared_ptr<double[]> & xVecCurr,const int&j,std::shared_ptr<double[]>&xVecNext);
+    void proposal_uni(const std::shared_ptr<double[]> & xVecCurr,const int&pos,std::shared_ptr<double[]>&xVecNext);
 
 
-    double acceptanceRatio_uni(const std::shared_ptr<double[]> & xVecCurr,const std::shared_ptr<double[]> & xVecNext,const int &j,const double &UCurr, double &UNext);
+    double acceptanceRatio_uni(const std::shared_ptr<double[]> & xVecCurr,const std::shared_ptr<double[]> & xVecNext,const int &pos,const double &UCurr, double &UNext);
 
     void saveLastData2Csv(const std::shared_ptr<double[]>& array, const  int& arraySize, const std::string& filename, const int& numbersPerRow);
 
@@ -248,6 +251,12 @@ public:
 
 
     void execute_mc_one_sweep(std::shared_ptr<double[]>&xVecCurr,std::shared_ptr<double[]>& xVecNext, const int &fls, const int& swp);
+
+
+    void execute_mc(const std::shared_ptr<double[]> &xVec, const int & sweepInit, const int & flushNum);
+
+    void init_and_run();
+
 
     template<class T>
     void print_shared_ptr(const std::shared_ptr<T> &ptr,const int& size){
@@ -272,9 +281,9 @@ public:
     double T;// temperature
     double beta;
     double h;// step size
-    size_t sweepToWrite;
-    size_t newFlushNum;
-    size_t loopLastFile;
+    int sweepToWrite;
+    int newFlushNum;
+    int sweepLastFile;
     std::shared_ptr<potentialFunction> potFuncPtr;
     std::string TDirRoot;
     std::string U_dist_dataDir;
@@ -291,6 +300,7 @@ public:
     int mcNum_1sweep;
     std::ranlux24_base e2;
     std::uniform_real_distribution<> distUnif01;
+    std::uniform_int_distribution<int> dist0_2N_minus1;
 };
 
 
