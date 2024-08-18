@@ -77,18 +77,18 @@ else:
 TStr=jsonDataFromConf["T"]
 funcName=jsonDataFromConf["potential_function_name"]
 unitCellNum=jsonDataFromConf["unitCellNum"]
-loopToWrite=jsonDataFromConf["loop_to_write"]
+loopToWrite=jsonDataFromConf["sweep_to_write"]
 
-xAVec=loadedJsonData["xAVec"]
-xBVec=loadedJsonData["xBVec"]
+xVec=loadedJsonData["xVec"]
+
 # y0Str=loadedJsonData["y0"]
 # z0Str=loadedJsonData["z0"]
 # y1Str=loadedJsonData["y1"]
-xAVecStr=",".join(map(str,xAVec))
-xBVecStr=",".join(map(str,xBVec))
+xVecStr=",".join(map(str,xVec))
+
 loopLastFile=loadedJsonData["loopLastFile"]
 
-initValsStr=f"{xAVecStr},"+f"{xBVecStr}"
+initValsStr=f"{xVecStr}"
 
 coefsStr=jsonDataFromConf["coefs"]+","+str(unitCellNum)
 newFlushNum=jsonFromSummary["newFlushNum"]
