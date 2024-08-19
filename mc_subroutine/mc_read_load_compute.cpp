@@ -212,13 +212,13 @@ std::string mc_computation::generate_varName(const int &ind,const int &numbersPe
         return "U";
     }//end ind=0
     else {
-        if (ind % 2 == 0) {
-            //A, even
+        if (ind % 2 == 1) {
+            //A, even, ind is odd
             int j=ind/2;
             return "xA" + std::to_string(j);
         } else {
-            //B, odd
-            int j=ind/2;
+            //B, odd, ind is even
+            int j=ind/2-1;
             return "xB" + std::to_string(j);
         }
 
@@ -229,7 +229,7 @@ std::string mc_computation::generate_varName(const int &ind,const int &numbersPe
 
 
 void mc_computation::execute_mc_one_sweep(std::shared_ptr<double[]>&xVecCurr,std::shared_ptr<double[]>& xVecNext, const int &fls, const int& swp) {
-
+    double UFull=potFuncPtr->potentialFull(xVecCurr.get());
     for (int j = 0; j < 2 * N; j++) {
         //one mc in sweep
         int pos = dist0_2N_minus1(e2);// position to change the value
@@ -240,20 +240,20 @@ void mc_computation::execute_mc_one_sweep(std::shared_ptr<double[]>&xVecCurr,std
         double UNext;
 
         double UCurr = (*potFuncPtr)(xVecCurr.get(), pos);
-
+        // double UCurr=potFuncPtr->potentialFull(xVecCurr.get());
         //accept reject
 
         double r = this->acceptanceRatio_uni(xVecCurr, xVecNext, pos, UCurr, UNext);
 
         double u = distUnif01(e2);
-
+        double UCurrCpy=UCurr;
         if (u <= r) {
             std::memcpy(xVecCurr.get(), xVecNext.get(), 2 * N * sizeof(double));
             UCurr = UNext;
 
         }//end of accept-reject
-
-        U_dist_ptr[swp * 2 * N * varNum + j * varNum+0] = UCurr;
+        UFull+=UCurr-UCurrCpy;
+        U_dist_ptr[swp * 2 * N * varNum + j * varNum+0] = UFull;
         std::memcpy(U_dist_ptr.get() + swp * 2 * N * varNum + j * varNum + 1, xVecCurr.get(), 2 * N * sizeof(double));
 
     }//end sweep for

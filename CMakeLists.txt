@@ -24,8 +24,8 @@ set_source_files_properties(
 
         COMPILE_OPTIONS "-O3"
 )
-set(Python3_INCLUDE_DIRS "/usr/include/python3.10")
-set(Python3_LIBRARIES "/usr/lib/x86_64-linux-gnu/libpython3.10.so")
+set(Python3_INCLUDE_DIRS "/usr/include/python3.12")
+set(Python3_LIBRARIES "/usr/lib/x86_64-linux-gnu/libpython3.12.so")
 include_directories(${Python3_INCLUDE_DIRS})
 
 set(Boost_NO_SYSTEM_PATHS YES)

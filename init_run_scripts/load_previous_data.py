@@ -39,30 +39,30 @@ xVec=np.array(list(range(1,2*N+1)))*0.77
 # xA=coordsAll[0::2]
 # xB=coordsAll[1::2]
 
-loopLastFile=-1
+sweepLastFile=-1
 
 #search csv files
 csvFileList=[]
-loopEndAll=[]
+sweepEndAll=[]
 for file in glob.glob(U_dist_dataDir+"/*.csv"):
     csvFileList.append(file)
-    matchEnd=re.search(r"loopEnd(\d+)",file)
+    matchEnd=re.search(r"sweepEnd(\d+)",file)
     if matchEnd:
-        loopEndAll.append(int(matchEnd.group(1)))
+        sweepEndAll.append(int(matchEnd.group(1)))
 
 
-def create_loadedJsonData(UVal,xVec,loopLastFileVal):
+def create_loadedJsonData(UVal,xVec,sweepLastFileVal):
     """
 
     :param UVal:
     :param xVec:
-    :param loopLastFileVal:
+    :param sweepLastFileVal:
     :return:
     """
     initDataDict={
         "U":str(UVal),
         "xVec":list(xVec),
-        "loopLastFile":str(loopLastFileVal)
+        "sweepLastFile":str(sweepLastFileVal)
     }
     # print(initDataDict)
     return json.dumps(initDataDict)
@@ -70,17 +70,17 @@ def create_loadedJsonData(UVal,xVec,loopLastFileVal):
 #if no data found, return the arbitrary values
 
 if len(csvFileList)==0:
-    loadedJsonDataStr=create_loadedJsonData(UInit,xVec,loopLastFile)
+    loadedJsonDataStr=create_loadedJsonData(UInit,xVec,sweepLastFile)
     loadedJsonData_stdout="loadedJsonData="+loadedJsonDataStr
     print(loadedJsonData_stdout)
     exit(0)
 
 
 #if found csv data
-sortedEndInds=np.argsort(loopEndAll)
-sortedLoopEnd=[loopEndAll[ind] for ind in sortedEndInds]
+sortedEndInds=np.argsort(sweepEndAll)
+sortedsweepEnd=[sweepEndAll[ind] for ind in sortedEndInds]
 sortedCsvFileNames=[csvFileList[ind] for ind in sortedEndInds]
-loopLastFile=sortedLoopEnd[-1]
+sweepLastFile=sortedsweepEnd[-1]
 
 lastFileName=sortedCsvFileNames[-1]
 
@@ -98,7 +98,7 @@ UInit=valsInLastRow[0]
 xVec=valsInLastRow[1:]
 
 
-loadedJsonDataStr=create_loadedJsonData(UInit,xVec,loopLastFile)
+loadedJsonDataStr=create_loadedJsonData(UInit,xVec,sweepLastFile)
 loadedJsonData_stdout="loadedJsonData="+loadedJsonDataStr
 print(loadedJsonData_stdout)
 exit(0)

@@ -10,14 +10,12 @@ if (len(sys.argv)!=2):
     exit(argErrCode)
 
 
-
-
 confFileName=str(sys.argv[1])
+# print("confFileName is "+confFileName)
 invalidValueErrCode=1
 summaryErrCode=2
 loadErrCode=3
 confErrCode=4
-
 
 #################################################
 #parse conf, get jsonDataFromConf
@@ -28,6 +26,8 @@ if confResult.returncode !=0:
     print("Error running parseConf.py with code "+str(confResult.returncode))
     # print(confResult.stderr)
     exit(confErrCode)
+
+
 match_confJson=re.match(r"jsonDataFromConf=(.+)$",confJsonStr2stdout)
 if match_confJson:
     jsonDataFromConf=json.loads(match_confJson.group(1))
@@ -35,6 +35,7 @@ else:
     print("jsonDataFromConf missing.")
     exit(confErrCode)
 # print(jsonDataFromConf)
+################################################
 
 ##################################################
 #read summary file, get jsonFromSummary
@@ -50,11 +51,10 @@ match_summaryJson=re.match(r"jsonFromSummary=(.+)$",parseSummaryResult.stdout)
 if match_summaryJson:
     jsonFromSummary=json.loads(match_summaryJson.group(1))
 # print(jsonFromSummary)
-
 ##################################################
 
 ###############################################
-#load previous data, to get xA, xB
+#load previous data, to get U, xA, xB,
 #get loadedJsonData
 loadResult=subprocess.run(["python3","./init_run_scripts/load_previous_data.py", json.dumps(jsonDataFromConf), json.dumps(jsonFromSummary)],capture_output=True, text=True)
 # print(loadResult.stdout)
@@ -68,50 +68,65 @@ if match_loadJson:
 else:
     print("loadedJsonData missing.")
     exit(loadErrCode)
-
-
 ###############################################
 
-###############################################
-#construct parameters that are passed to mc
-TStr=jsonDataFromConf["T"]
-funcName=jsonDataFromConf["potential_function_name"]
-unitCellNum=jsonDataFromConf["unitCellNum"]
-sweepToWrite=jsonDataFromConf["sweep_to_write"]
-
-xVec=loadedJsonData["xVec"]
-
-# y0Str=loadedJsonData["y0"]
-# z0Str=loadedJsonData["z0"]
-# y1Str=loadedJsonData["y1"]
-xVecStr=",".join(map(str,xVec))
-
-sweepLastFile=loadedJsonData["sweepLastFile"]
-
-initValsStr=f"{xVecStr}"
-
-coefsStr=jsonDataFromConf["coefs"]+","+str(unitCellNum)
-newFlushNum=jsonFromSummary["newFlushNum"]
-TDirRoot=jsonFromSummary["TDirRoot"]
-U_dist_dataDir=jsonFromSummary["U_dist_dataDir"]
-
-hStr=jsonDataFromConf["h"]
-params2cppInFile=[
-    TStr+"\n",
-    unitCellNum+"\n",
-    coefsStr+"\n",
-    funcName+"\n",
-    initValsStr+"\n",
-    sweepToWrite+"\n",
-    newFlushNum+"\n",
-    sweepLastFile+"\n",
-    TDirRoot+"\n",
-    U_dist_dataDir+"\n",
-    hStr+"\n"
 
 
-]
+###########################################################
 
-cppInParamsFileName=TDirRoot+"/cppIn.txt"
-with open(cppInParamsFileName,"w+") as fptr:
-    fptr.writelines(params2cppInFile)
+
+
+###########################################################
+
+##########################################################
+
+
+##########################################################
+#statistics
+checkU_distErrCode = 5
+# print("entering statistics")
+# Start the subprocess
+# print("jsonFromSummary="+json.dumps(jsonFromSummary))
+# print("jsonDataFromConf="+json.dumps(jsonDataFromConf))
+checkU_distProcess = subprocess.Popen(
+    ["python3", "-u", "./oneTCheckObservables/check_U_distOneT_pkl.py",
+     json.dumps(jsonFromSummary), json.dumps(jsonDataFromConf)],
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+)
+# return_code = checkU_distProcess.poll()
+# if return_code is not None:
+#     print(f"Process exited immediately with return code: {return_code}")
+
+# Read output in real-time
+while True:
+    output = checkU_distProcess.stdout.readline()
+    if output == '' and checkU_distProcess.poll() is not None:
+        break
+    if output:
+        print(output.strip())
+
+# Collect remaining output and error messages
+stdout, stderr = checkU_distProcess.communicate()
+# Check if the process was killed
+if checkU_distProcess.returncode is not None:
+    if checkU_distProcess.returncode < 0:
+        # Process was killed by a signal
+        print(f"checkU_distProcess was killed by signal: {-checkU_distProcess.returncode}")
+    else:
+        # Process exited normally
+        print(f"checkU_distProcess exited with return code: {checkU_distProcess.returncode}")
+else:
+    print("checkU_distProcess is still running")
+# Print any remaining standard output
+if stdout:
+    print(stdout.strip())
+
+# Handle errors and print the return code if there was an error
+if stderr:
+    print(f"checkU_distProcess return code={checkU_distProcess.returncode}")
+    print(stderr.strip())
+
+##########################################################
+
+
+
