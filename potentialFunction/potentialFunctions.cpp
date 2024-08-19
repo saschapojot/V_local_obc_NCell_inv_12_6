@@ -3,7 +3,8 @@
 //
 #include "potentialFunctionPrototype.hpp"
 
-class V_inv_12_6:public potentialFunction {
+class V_inv_12_6:public potentialFunction
+{
 public:
     V_inv_12_6(const std::string &coefsStr):potentialFunction(){
         this->coefsInStr=coefsStr;
@@ -48,12 +49,12 @@ public:
         this->r2=std::pow(2.0*a2/b2,1.0/6.0);
         this->lm=(static_cast<double >(N)*(r1+r2))*1.5;
         this->eps=((r1+r2)/2.0)/8;
-//        pow_result_tmp=std::shared_ptr<double[]>(new double[N], std::default_delete<double[]>());
+        //        pow_result_tmp=std::shared_ptr<double[]>(new double[N], std::default_delete<double[]>());
 
         std::cout << "a1=" << a1 << ", b1=" << b1 << ", a2=" << a2 << ", b2=" << b2 << std::endl;
         std::cout<<"r1="<<r1<<", r2="<<r2<<std::endl;
         std::cout<<"lm="<<lm<<std::endl;
-//        std::cout<<"eps="<<eps<<std::endl;
+        //        std::cout<<"eps="<<eps<<std::endl;
 
 
     }
@@ -61,36 +62,54 @@ public:
 
     double operator() (const double * xVec, const int& j)override{
         //only computes the part of the potential that changes
-    if(j<0 or j>=2*N){
-        std::cerr<<"j="+std::to_string(j)+" out of range";
-        std::exit(14);
-    }
-       if(j==0){
-           return V1(xVec[j+1]-xVec[j]);
-       }//end 0
-       else if(j==2*N-1){
-           return V1(xVec[j]-xVec[j-1]);
-       }//end 2N-1
-       else{
-           if(j%2==1){
-               //B, odd position
-               double d1=xVec[j]-xVec[j-1];
-               double d2=xVec[j+1]-xVec[j];
-               return V1(d1)+V2(d2);
-           }//end odd
-           else{
-               //A, even position
-               double d2=xVec[j]-xVec[j-1];
-               double d1=xVec[j+1]-xVec[j];
-               return V2(d2)+V1(d1);
-           }//end even
+        if(j<0 or j>=2*N){
+            std::cerr<<"j="+std::to_string(j)+" out of range";
+            std::exit(14);
+        }
+        if(j==0){
+            return V1(xVec[j+1]-xVec[j]);
+        }//end 0
+        else if(j==2*N-1){
+            return V1(xVec[j]-xVec[j-1]);
+        }//end 2N-1
+        else{
+            if(j%2==1){
+                //B, odd position
+                double d1=xVec[j]-xVec[j-1];
+                double d2=xVec[j+1]-xVec[j];
+                return V1(d1)+V2(d2);
+            }//end odd
+            else{
+                //A, even position
+                double d2=xVec[j]-xVec[j-1];
+                double d1=xVec[j+1]-xVec[j];
+                return V2(d2)+V1(d1);
+            }//end even
 
 
 
-       }//end middle
+        }//end middle
 
     }//end () operator
 
+    double potentialFull(const double * xVec)override
+    {
+        double val=0;
+
+        for (int j=0;j<2*N;j+=2)
+        {
+            double d1=xVec[j+1]-xVec[j];
+            val+=V1(d1);
+        }
+
+        for(int j=0;j<2*N-1;j+=2)
+        {
+            double d2=xVec[j+1]-xVec[j];
+            val+=V2(d2);
+        }
+
+        return val;
+    }
     double V1(const double &r){
         double  val=a1*std::pow(r,-12.0)-b1*std::pow(r,-6.0);
         return val;

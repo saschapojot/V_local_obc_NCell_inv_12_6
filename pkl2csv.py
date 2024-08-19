@@ -156,7 +156,7 @@ print(inFileU)
 with open(inFileU,"rb") as fptr:
     UVec=np.array(pickle.load(fptr))
 
-ULength=int(1e6)
+ULength=int(1e2)
 UPart=UVec[-ULength:]
 sameU,lagU=auto_corrForOneColumn(UPart)
 print("lagU="+str(lagU))

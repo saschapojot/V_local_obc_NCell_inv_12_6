@@ -22,6 +22,7 @@ public:
 //    virtual double plain_for(const double&L,const double *d0Vec, const double *d1Vec)=0;
     virtual void json2Coefs(const std::string &coefsStr)=0;
     virtual  void init()=0;
+    virtual double potentialFull(const double * xVec)=0;
     virtual double getLm() const = 0; //  method to get lm
     virtual double get_eps() const = 0; //  method to get eps
     virtual ~ potentialFunction() {};

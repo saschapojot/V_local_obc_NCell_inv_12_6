@@ -36,7 +36,7 @@ N=int(jsonDataFromConf["unitCellNum"])
 
 summary_U_distFile=TDirRoot+"/summary_U_dist.txt"
 # print(summary_U_distFile)
-lastFileNum=5
+lastFileNum=10
 def sort_data_files_by_sweepEnd(oneDir):
     dataFilesAll=[]
     sweepEndAll=[]
