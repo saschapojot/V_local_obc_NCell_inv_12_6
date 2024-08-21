@@ -184,7 +184,7 @@ for j in range(0,len(sorted_statsFileVec)):
     sorted_NVecTmp,_,sorted_LMeanVecTmp,sorted_hf_LVecTmp,_,_,sorted_LPerUnitCellTmp=createVecFromOneFile(fileNameTmp)
     label_mc = 'mc' if first_label else None
 
-    # ax.errorbar(sorted_NVecTmp,sorted_LPerUnitCellTmp,yerr=sorted_hf_LVecTmp/sorted_NVecTmp,fmt='.', color="black", ecolor='r', capsize=5, label=label_mc)
+    ax.errorbar(sorted_NVecTmp,sorted_LPerUnitCellTmp,yerr=sorted_hf_LVecTmp/sorted_NVecTmp,fmt='.', color="black", ecolor='r', capsize=5, label=label_mc)
     ax.plot(sorted_NVecTmp,sorted_LPerUnitCellTmp*L_scale,label="T="+TStrTmp,linestyle="--",linewidth=1,marker=".",markersize=4)
     first_label = False  # Turn off the label after the first iteration
 
