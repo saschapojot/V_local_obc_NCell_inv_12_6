@@ -189,7 +189,7 @@ public:
         potFuncPtr->init();
         this->varNum = 2*N+1;//U,x
         try {
-            this->U_dist_ptr= std::shared_ptr<double[]>(new double[sweepToWrite*mcNum_1sweep * varNum],
+            this->U_dist_ptr= std::shared_ptr<double[]>(new double[sweepToWrite * varNum],
                                                         std::default_delete<double[]>());
         }
         catch (const std::bad_alloc &e) {

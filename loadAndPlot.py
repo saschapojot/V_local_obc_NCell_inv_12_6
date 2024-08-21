@@ -27,6 +27,19 @@ T=float(sys.argv[1])
 unitCellNum=int(sys.argv[2])
 
 TStr=format_using_decimal(T)
+
+inParamFileName="./V_inv_12_6Params.csv"
+rowNum=0
+inDf=pd.read_csv(inParamFileName)
+oneRow=inDf.iloc[rowNum,:]
+a1=float(oneRow.loc["a1"])
+b1=float(oneRow.loc["b1"])
+a2=float(oneRow.loc["a2"])
+b2=float(oneRow.loc["b2"])
+
+def V1(r):
+    return a1*r**(-12)-b1*r**(-6)
+
 def sort_data_files_by_swEnd(oneDataFolder):
     """
 
@@ -71,11 +84,11 @@ for pkl_file in files2Plot:
         arrIn=pickle.load(fptr)
         arrU=np.append(arrU,arrIn)
 
-
-plt.figure()
-plt.scatter(range(0,len(arrU)),arrU,s=1)
-plt.title("U in last "+str(lastFilesNum)+" files")
-plt.savefig("lastFilesU.png")
+avg_arrU=arrU/unitCellNum
+plt.figure(figsize=(120,20))
+plt.scatter(range(0,len(avg_arrU)),avg_arrU,s=1)
+plt.title("T="+str(TStr)+", N="+str(unitCellNum)+", avg U in last "+str(lastFilesNum)+" files")
+plt.savefig("T"+TStr+"N"+str(unitCellNum)+"lastFilesU.png")
 plt.close()
 # peaksU, _ = find_peaks(arrU)
 # periods = np.diff(peaksU)
@@ -87,8 +100,10 @@ plt.close()
 #
 # print(np.sqrt(np.var(periods,ddof=1)))
 
-plt_name_x1="xA3"
-plt_name_x2="xB3"
+ind=5
+
+plt_name_x1="xA"+str(ind)
+plt_name_x2="xB"+str(ind)
 
 in_x1Path=dataPath+"/"+plt_name_x1+"/"
 in_x2Path=dataPath+"/"+plt_name_x2+"/"
@@ -121,3 +136,16 @@ plt.scatter(range(0,len(arr_diff)),arr_diff,s=1)
 plt.title(plt_name_x2+" - "+plt_name_x1+" in last "+str(lastFilesNum)+" files")
 plt.savefig("lastFilesDist.png")
 plt.close()
+
+def autocorrelation(x, lag):
+    x_mean = np.mean(x)
+    x_var = np.var(x)
+    N = len(x)
+
+    # Compute autocorrelation for given lag
+    acf = np.sum((x[:N-lag] - x_mean) * (x[lag:] - x_mean)) / ((N-lag) * x_var)
+
+    return acf
+
+# autcU=autocorrelation(arrU,100000)
+# print(autcU)

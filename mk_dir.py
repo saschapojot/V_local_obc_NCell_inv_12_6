@@ -30,8 +30,8 @@ def format_using_decimal(value):
     # Remove trailing zeros and ensure fixed-point notation
     formatted_value = decimal_value.quantize(Decimal(1)) if decimal_value == decimal_value.to_integral() else decimal_value.normalize()
     return str(formatted_value)
-TVals=[8,10,12]
-unitCellNum=5
+TVals=[1,2,3,4,5,6]
+unitCellNum=80
 dataRoot="./dataAll/"
 dataOutDir=dataRoot+"/dataAllUnitCell"+str(unitCellNum)+"/row"+str(rowNum)+"/"
 
@@ -82,15 +82,15 @@ def contents_to_conf(k):
         "\n",
         "observable_name=U_dist\n",
         "\n",
-        "effective_data_num_required=4000\n",
+        "effective_data_num_required=1000\n",
         "\n",
-        "sweep_to_write=100000\n",
+        "sweep_to_write=1000000\n",
         "\n",
         "#within each flush,  sweep_to_write mc computations are executed\n",
         "\n",
-        "default_flush_num=10\n",
+        "default_flush_num=15\n",
         "\n",
-        "h=0.1\n"
+        "h=5e-2\n"
 
 
 

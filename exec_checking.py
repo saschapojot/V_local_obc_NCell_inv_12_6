@@ -28,7 +28,7 @@ print("TStr="+TStr)
 #launch mc, i.e., giving initial conditions
 
 launchResult=subprocess.run(["python3", "launch_one_run.py", "./dataAll/dataAllUnitCell"+str(unitCellNum)+"/row0/T"+TStr+"/run_T"+TStr+".mc.conf"])
-# print(launchResult.stdout)
+print(launchResult.stdout)
 if launchResult.returncode!=0:
     print("error in launch one run: "+str(launchResult.returncode))
 #############################################

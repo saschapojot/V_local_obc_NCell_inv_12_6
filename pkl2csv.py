@@ -50,7 +50,7 @@ def sort_data_files_by_swEnd(oneDataFolder):
     return sortedDataFiles
 
 
-cellInd=2
+cellInd=7
 T=float(sys.argv[1])
 unitCellNum=int(sys.argv[2])
 
@@ -157,11 +157,15 @@ with open(inFileU,"rb") as fptr:
     UVec=np.array(pickle.load(fptr))
 
 ULength=int(1e2)
-UPart=UVec[-ULength:]
+UPart=UVec[-ULength:]/unitCellNum
 sameU,lagU=auto_corrForOneColumn(UPart)
 print("lagU="+str(lagU))
 UDiff=UPart[1:]-UPart[:-1]
 
+UPartCentralized=UPart-np.mean(UPart)
+print(UPartCentralized[-ULength:])
+sameUC,lagUC=auto_corrForOneColumn(UPartCentralized)
+print("lagUC="+str(lagUC))
 plt.figure()
 plt.scatter(range(0,len(UPart)),UPart,s=1)
 plt.title("UAll")

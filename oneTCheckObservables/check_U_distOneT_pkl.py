@@ -36,7 +36,7 @@ N=int(jsonDataFromConf["unitCellNum"])
 
 summary_U_distFile=TDirRoot+"/summary_U_dist.txt"
 # print(summary_U_distFile)
-lastFileNum=10
+lastFileNum=8
 def sort_data_files_by_sweepEnd(oneDir):
     dataFilesAll=[]
     sweepEndAll=[]
@@ -178,8 +178,10 @@ def checkUDataFilesForOneT(UData_dir,startingFileFraction, startingRowFraction):
             # print("len(inArr)="+str(len(inArr)))
         arr=np.append(arr,inArr)
 
+    # print(arr[:100]/N)
+    avg_Uarr=arr
 
-    sameUTmp,lagUTmp=auto_corrForOneColumn(arr)
+    sameUTmp,lagUTmp=auto_corrForOneColumn(avg_Uarr)
 
 
     #if one lag==-1, then the auto-correlation is too large
@@ -187,7 +189,7 @@ def checkUDataFilesForOneT(UData_dir,startingFileFraction, startingRowFraction):
     if sameUTmp==True or lagUTmp==-1:
         return [sameUTmp,lagUTmp,-1,-1,-1,-1,-1]
 
-    pUTmp,statUTmp,lengthUTmp=ksTestOneColumn(arr,lagUTmp)
+    pUTmp,statUTmp,lengthUTmp=ksTestOneColumn(avg_Uarr,lagUTmp)
     numDataPoints=lengthUTmp
 
     return [sameUTmp,lagUTmp,pUTmp,statUTmp,numDataPoints,startingFileInd,startingVecPosition]

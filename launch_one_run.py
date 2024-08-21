@@ -56,6 +56,7 @@ if match_summaryJson:
 ###############################################
 #load previous data, to get xA, xB
 #get loadedJsonData
+
 loadResult=subprocess.run(["python3","./init_run_scripts/load_previous_data.py", json.dumps(jsonDataFromConf), json.dumps(jsonFromSummary)],capture_output=True, text=True)
 # print(loadResult.stdout)
 if loadResult.returncode!=0:

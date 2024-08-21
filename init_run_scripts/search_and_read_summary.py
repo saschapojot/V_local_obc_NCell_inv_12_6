@@ -37,6 +37,7 @@ sweep_to_write=int(jsonDataFromConf["sweep_to_write"])
 default_flush_num=int(jsonDataFromConf["default_flush_num"])
 
 confFileName=jsonDataFromConf["confFileName"]
+N=int(jsonDataFromConf["unitCellNum"])
 
 #TDirRoot contains everything for a computation
 TDirRoot=os.path.dirname(confFileName)
@@ -171,7 +172,9 @@ for oneLine in linesInSummaryFile:
 
 
 newMcStepNum=lag*newDataPointNum
-newFlushNum=int(np.ceil(newMcStepNum/sweep_to_write))
+# print(newMcStepNum)
+# print(sweep_to_write)
+newFlushNum=int(np.ceil(newMcStepNum/(sweep_to_write)))
 jsonFromSummaryStr=create_jsonFromSummary(startingFileInd,startingVecPosition,newMcStepNum,
                                           newDataPointNum,newFlushNum,TDirRoot,U_dist_dataDir)
 jsonFromSummary_stdout="jsonFromSummary="+jsonFromSummaryStr

@@ -61,7 +61,7 @@ loadResult=subprocess.run(["python3","./init_run_scripts/load_previous_data.py",
 if loadResult.returncode!=0:
     print("Error in loading with code "+str(loadResult.returncode))
     exit(loadErrCode)
-
+# print("entering")
 match_loadJson=re.match(r"loadedJsonData=(.+)$",loadResult.stdout)
 if match_loadJson:
     loadedJsonData=json.loads(match_loadJson.group(1))

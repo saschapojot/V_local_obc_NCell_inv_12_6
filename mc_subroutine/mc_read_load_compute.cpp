@@ -230,6 +230,10 @@ std::string mc_computation::generate_varName(const int &ind,const int &numbersPe
 
 void mc_computation::execute_mc_one_sweep(std::shared_ptr<double[]>&xVecCurr,std::shared_ptr<double[]>& xVecNext, const int &fls, const int& swp) {
     double UFull=potFuncPtr->potentialFull(xVecCurr.get());
+
+    //next U
+    double UNext;
+    double UCurr;
     for (int j = 0; j < 2 * N; j++) {
         //one mc in sweep
         int pos = dist0_2N_minus1(e2);// position to change the value
@@ -237,9 +241,9 @@ void mc_computation::execute_mc_one_sweep(std::shared_ptr<double[]>&xVecCurr,std
         this->proposal_uni(xVecCurr, pos, xVecNext);
 
         //next U
-        double UNext;
 
-        double UCurr = (*potFuncPtr)(xVecCurr.get(), pos);
+
+         UCurr = (*potFuncPtr)(xVecCurr.get(), pos);
         // double UCurr=potFuncPtr->potentialFull(xVecCurr.get());
         //accept reject
 
@@ -253,10 +257,13 @@ void mc_computation::execute_mc_one_sweep(std::shared_ptr<double[]>&xVecCurr,std
 
         }//end of accept-reject
         UFull+=UCurr-UCurrCpy;
-        U_dist_ptr[swp * 2 * N * varNum + j * varNum+0] = UFull;
-        std::memcpy(U_dist_ptr.get() + swp * 2 * N * varNum + j * varNum + 1, xVecCurr.get(), 2 * N * sizeof(double));
+        // U_dist_ptr[swp * 2 * N * varNum + j * varNum+0] = UFull;
+        // std::memcpy(U_dist_ptr.get() + swp * 2 * N * varNum + j * varNum + 1, xVecCurr.get(), 2 * N * sizeof(double));
 
     }//end sweep for
+    U_dist_ptr[swp  * varNum +0] = UFull;
+    std::memcpy(U_dist_ptr.get() + swp * varNum  + 1, xVecCurr.get(), 2 * N * sizeof(double));
+
 
 }
 
@@ -284,7 +291,7 @@ void mc_computation::execute_mc(const std::shared_ptr<double[]> &xVec, const int
         std::string out_U_distPickleFileName_pkl = this->U_dist_dataDir + "/" + fileNameMiddle + ".U_dist.pkl";
 
         std::string out_U_distPickleFileName_csv = this->U_dist_dataDir + "/" + fileNameMiddle + ".U_dist.csv";
-        saveLastData2Csv(U_dist_ptr, sweepToWrite * mcNum_1sweep * varNum, out_U_distPickleFileName_csv, varNum);
+        saveLastData2Csv(U_dist_ptr, sweepToWrite  * varNum, out_U_distPickleFileName_csv, varNum);
 
         for (int startingInd = 0; startingInd < varNum; startingInd++) {
             std::string varName = generate_varName(startingInd, varNum);
@@ -293,7 +300,7 @@ void mc_computation::execute_mc(const std::shared_ptr<double[]> &xVec, const int
                 fs::create_directories(outVarPath);
             }
             std::string outVarFile = outVarPath + "/" + fileNameMiddle + "." + varName + ".pkl";
-            save_array_to_pickle_one_column(U_dist_ptr.get(), startingInd, sweepToWrite * mcNum_1sweep * varNum, varNum,
+            save_array_to_pickle_one_column(U_dist_ptr.get(), startingInd, sweepToWrite  * varNum, varNum,
                                             outVarFile);
 
         }

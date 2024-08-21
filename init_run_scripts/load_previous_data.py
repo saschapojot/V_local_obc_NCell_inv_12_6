@@ -50,7 +50,7 @@ for file in glob.glob(U_dist_dataDir+"/*.csv"):
     if matchEnd:
         sweepEndAll.append(int(matchEnd.group(1)))
 
-
+# print(csvFileList)
 def create_loadedJsonData(UVal,xVec,sweepLastFileVal):
     """
 
