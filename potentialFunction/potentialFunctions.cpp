@@ -102,7 +102,7 @@ public:
             val+=V1(d1);
         }
 
-        for(int j=0;j<2*N-1;j+=2)
+        for(int j=1;j<2*N-1;j+=2)
         {
             double d2=xVec[j+1]-xVec[j];
             val+=V2(d2);
