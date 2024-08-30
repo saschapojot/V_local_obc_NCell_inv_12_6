@@ -36,7 +36,7 @@ N=int(jsonDataFromConf["unitCellNum"])
 
 summary_U_distFile=TDirRoot+"/summary_U_dist.txt"
 # print(summary_U_distFile)
-lastFileNum=8
+lastFileNum=10
 def sort_data_files_by_sweepEnd(oneDir):
     dataFilesAll=[]
     sweepEndAll=[]
@@ -453,7 +453,7 @@ if (np.max(statVec)<=statThreshhold or np.min(pVec)>=0.01) and numDataPoints>=20
         +"startingFileInd="+str(startingFileInd)+"\n" \
         +"startingVecPosition="+str(startingVecPosition)+"\n" \
         +"newDataPointNum="+str(newDataPointNum)+"\n"
-
+    print(msg)
     with open(summary_U_distFile,"w+") as fptr:
         fptr.writelines(msg)
     exit(0)
@@ -469,6 +469,7 @@ if numDataPoints<200:
 
     continueMsg+="numDataPoints="+str(numDataPoints)+" too low\n"
     continueMsg+="lag="+str(lagMax)+"\n"
+print(continueMsg)
 with open(summary_U_distFile,"w+") as fptr:
     fptr.writelines(continueMsg)
 exit(0)

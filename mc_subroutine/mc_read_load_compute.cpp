@@ -86,8 +86,8 @@ double mc_computation::acceptanceRatio_uni(const std::shared_ptr<double[]> & xVe
 
     double lm=potFuncPtr->getLm();
 
-    // UNext=(*potFuncPtr)(xVecNext.get(),pos);
-    UNext=potFuncPtr->potentialFull(xVecNext.get());
+    UNext=(*potFuncPtr)(xVecNext.get(),pos);
+    // UNext=potFuncPtr->potentialFull(xVecNext.get());
     double numerator = -this->beta*UNext;
     double denominator=-this->beta*UCurr;
     double R=std::exp(numerator - denominator);
@@ -228,9 +228,9 @@ std::string mc_computation::generate_varName(const int &ind,const int &numbersPe
 
 
 
-void mc_computation::execute_mc_one_sweep(std::shared_ptr<double[]>&xVecCurr, double &UCurr,std::shared_ptr<double[]>& xVecNext, const int &fls, const int& swp) {
+void mc_computation::execute_mc_one_sweep(std::shared_ptr<double[]>&xVecCurr, double &UFull,std::shared_ptr<double[]>& xVecNext, const int &fls, const int& swp) {
 
-
+     UFull=potFuncPtr->potentialFull(xVecCurr.get());
     //next U
     double UNext;
 
@@ -243,8 +243,8 @@ void mc_computation::execute_mc_one_sweep(std::shared_ptr<double[]>&xVecCurr, do
         //next U
 
 
-         UCurr = potFuncPtr->potentialFull(xVecCurr.get());
-        // double UCurr=potFuncPtr->potentialFull(xVecCurr.get());
+         // UCurr = potFuncPtr->potentialFull(xVecCurr.get());
+        double UCurr = (*potFuncPtr)(xVecCurr.get(), pos);
         //accept reject
 
         double r = this->acceptanceRatio_uni(xVecCurr, xVecNext, pos, UCurr, UNext);
@@ -256,7 +256,7 @@ void mc_computation::execute_mc_one_sweep(std::shared_ptr<double[]>&xVecCurr, do
             UCurr = UNext;
 
         }//end of accept-reject
-
+        UFull+=UCurr-UCurrCpy;
         // U_dist_ptr[swp * 2 * N * varNum + j * varNum+0] = UFull;
         // std::memcpy(U_dist_ptr.get() + swp * 2 * N * varNum + j * varNum + 1, xVecCurr.get(), 2 * N * sizeof(double));
 
@@ -276,16 +276,16 @@ void mc_computation::execute_mc(const std::shared_ptr<double[]> &xVec, const int
 
 
     std::memcpy(xVecCurr.get(), xVec.get(), 2 * N * sizeof(double));
-    double UCurr=0;
+    double UCurrFull=0;
     int sweepStart = sweepInit;
     for (int fls = 0; fls < flushNum; fls++) {
         const auto tMCStart{std::chrono::steady_clock::now()};
         for (int swp = 0; swp < sweepToWrite*sweep_multiple; swp++) {
-            execute_mc_one_sweep(xVecCurr,UCurr, xVecNext, fls, swp);
+            execute_mc_one_sweep(xVecCurr,UCurrFull, xVecNext, fls, swp);
             if(swp%sweep_multiple==0)
             {
                 int swp_out=swp/sweep_multiple;
-                U_dist_ptr[swp_out  * varNum +0] = UCurr;
+                U_dist_ptr[swp_out  * varNum +0] = UCurrFull;
                 std::memcpy(U_dist_ptr.get() + swp_out * varNum  + 1, xVecCurr.get(), 2 * N * sizeof(double));
             }//end save to array
         }//end sweep for
