@@ -30,7 +30,7 @@ def format_using_decimal(value):
     # Remove trailing zeros and ensure fixed-point notation
     formatted_value = decimal_value.quantize(Decimal(1)) if decimal_value == decimal_value.to_integral() else decimal_value.normalize()
     return str(formatted_value)
-TVals=[1,2,3,4,5,6]
+TVals=[6]
 unitCellNum=80
 dataRoot="./dataAll/"
 dataOutDir=dataRoot+"/dataAllUnitCell"+str(unitCellNum)+"/row"+str(rowNum)+"/"
@@ -90,7 +90,9 @@ def contents_to_conf(k):
         "\n",
         "default_flush_num=15\n",
         "\n",
-        "h=5e-2\n"
+        "h=5e-2\n",
+        "\n",
+        "sweep_multiple=1\n"
 
 
 

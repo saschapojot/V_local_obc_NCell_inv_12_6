@@ -97,6 +97,9 @@ TDirRoot=jsonFromSummary["TDirRoot"]
 U_dist_dataDir=jsonFromSummary["U_dist_dataDir"]
 
 hStr=jsonDataFromConf["h"]
+sweep_multipleStr=jsonDataFromConf["sweep_multiple"]
+
+
 params2cppInFile=[
     TStr+"\n",
     unitCellNum+"\n",
@@ -108,7 +111,8 @@ params2cppInFile=[
     sweepLastFile+"\n",
     TDirRoot+"\n",
     U_dist_dataDir+"\n",
-    hStr+"\n"
+    hStr+"\n",
+    sweep_multipleStr+"\n"
 
 
 ]

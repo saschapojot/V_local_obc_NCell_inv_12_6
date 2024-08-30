@@ -55,6 +55,7 @@ def parseConfContents(file):
     coefsStr=""
     unitCellNumStr=""
     hStr=""
+    swp_multiplyStr=""
     float_pattern = r'[-+]?(?:\d*\.\d+|\d+)(?:[eE][-+]?\d+)?'
     boolean_pattern = r'(true|false)'
 
@@ -160,6 +161,16 @@ def parseConfContents(file):
                 else:
                     print(fmtErrStr+oneLine)
                     exit(fmtCode)
+
+            #match sweep_multiply
+            if key=="sweep_multiple":
+                match_swpMultiply=re.match(r"(\d+)",value)
+                if match_swpMultiply:
+                    swp_multiplyStr=match_swpMultiply.group(1)
+                else:
+                    print(fmtErrStr+oneLine)
+                    exit(fmtCode)
+
         else:
             print("line: "+oneLine+" is discarded.")
             continue
@@ -199,6 +210,9 @@ def parseConfContents(file):
         print("h not found in "+str(file))
         exit(valueMissingCode)
 
+    if swp_multiplyStr=="":
+        swp_multiplyStr="1"
+
 
     if obs_name=="":
         dictTmp={
@@ -212,7 +226,8 @@ def parseConfContents(file):
             "coefs":coefsStr,
             "confFileName":file,
             "unitCellNum":unitCellNumStr,
-            "h":hStr
+            "h":hStr,
+            "sweep_multiple":swp_multiplyStr
 
         }
         return dictTmp
@@ -229,7 +244,8 @@ def parseConfContents(file):
             "coefs":coefsStr,
             "confFileName":file,
             "unitCellNum":unitCellNumStr,
-            "h":hStr
+            "h":hStr,
+            "sweep_multiple":swp_multiplyStr
 
 
         }
