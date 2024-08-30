@@ -2,6 +2,7 @@ import subprocess
 from decimal import Decimal
 
 import sys
+import signal
 #this scrip executes mc by checking statistics
 def format_using_decimal(value):
     # Convert the float to a Decimal using string conversion to avoid precision issues
@@ -69,19 +70,38 @@ if stderr:
 
 #############################################
 #run executable
+def terminate_process(signal_number, frame):
+    print("Terminating subprocess...")
+    cpp_process.terminate()
+    cpp_process.wait()  # Wait for the subprocess to properly terminate
+    sys.exit(0)  # Exit the script
+
 cppExecutable="./run_mc"
-cpp_process = subprocess.Popen([cppExecutable, "./dataAll/dataAllUnitCell"+str(unitCellNum)+"/row0/T"+TStr+"/cppIn.txt" ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-while True:
-    output = cpp_process.stdout.readline()
-    if output == '' and cpp_process.poll() is not None:
-        break
-    if output:
-        print(output.strip())
-stdout, stderr = cpp_process.communicate()
-if stdout:
-    print(stdout.strip())
-if stderr:
-    print(stderr.strip())
+cpp_process = subprocess.Popen([cppExecutable, "./dataAll/dataAllUnitCell"+str(unitCellNum)+"/row0/T"+TStr+"/cppIn.txt" ],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, text=True)
+# Register the signal handler
+signal.signal(signal.SIGINT, terminate_process)
+
+# Read output line by line in real-time
+try:
+    for line in iter(cpp_process.stdout.readline, ''):
+        print(line.strip())
+
+    # Wait for the process to finish and get the final output
+    stdout, stderr = cpp_process.communicate()
+
+    # Print any remaining output
+    if stdout:
+        print(stdout.strip())
+    if stderr:
+        print(stderr.strip())
+except Exception as e:
+    print(f"An error occurred: {e}")
+finally:
+    # Ensure the subprocess is terminated if the script exits unexpectedly
+    cpp_process.terminate()
+    cpp_process.wait()
 
 #############################################
 
